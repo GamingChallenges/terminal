@@ -198,16 +198,23 @@ async function boot() {
   createInputLine();
 }
 
-// commands
 async function handleCommand(val) {
 
   // 🔐 CHANGE THIS PASSWORD WHEN READY
   if (val === "halden") {
-    await typeText("ACCESS GRANTED");
+
+    await typeText("ACCESS ACCEPTED");
+    await typeText("Verifying credentials...");
+    await typeText("Establishing secure session...");
+    await typeText("Linking to Lazarus internal network...");
     await typeText("Welcome, Dr. Halden");
     await typeText("");
-    await typeText("Retrieving classified data...");
-    await typeText("STATUS: CONTAINMENT FAILURE");
+
+    await typeText("Redirecting to NODE-02...");
+
+    setTimeout(() => {
+      window.location.href = "/node-02";
+    }, 2000);
   }
 
   else {
@@ -222,8 +229,6 @@ async function handleCommand(val) {
     setTimeout(() => term.classList.remove("glitch"), 1000);
   }
 }
-
-boot();
 </script>
 
 </body>
