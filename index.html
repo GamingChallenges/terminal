@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Terminal</title>
+  <title>Secure Terminal</title>
   <style>
     body {
       background: black;
@@ -9,35 +9,64 @@
       font-family: monospace;
       padding: 20px;
     }
+    #terminal {
+      white-space: pre-line;
+    }
     input {
       background: black;
       color: #00ff00;
       border: none;
       outline: none;
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
 
-<p>ACCESS TERMINAL</p>
-<p>Enter password:</p>
+<div id="terminal">
+Initializing system...
+Connecting...
+Accessing database...
 
-<input id="input" autofocus onkeydown="check(event)">
+ENTER PASSWORD:
+</div>
 
-<p id="output"></p>
+<input id="input" autofocus onkeydown="handle(event)">
 
 <script>
-function check(e) {
+function typeText(text, delay = 30) {
+  return new Promise(resolve => {
+    let i = 0;
+    let term = document.getElementById("terminal");
+    let interval = setInterval(() => {
+      term.innerHTML += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        term.innerHTML += "\n";
+        resolve();
+      }
+    }, delay);
+  });
+}
+
+async function handle(e) {
   if (e.key === "Enter") {
     let val = document.getElementById("input").value.toLowerCase();
+    document.getElementById("input").value = "";
+
+    let term = document.getElementById("terminal");
+
+    term.innerHTML += "> " + val + "\n";
 
     if (val === "ikea") {
-      document.getElementById("output").innerText = "ACCESS GRANTED\nNext clue: Warehouse 3";
+      await typeText("ACCESS GRANTED...");
+      await typeText("Target identified:");
+      await typeText("IKEA WAREHOUSE");
+      await typeText("Prepare for horde.");
     } else {
-      document.getElementById("output").innerText = "ACCESS DENIED";
+      await typeText("ACCESS DENIED");
     }
-
-    document.getElementById("input").value = "";
   }
 }
 </script>
