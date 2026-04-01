@@ -51,7 +51,6 @@
       100% { transform: translate(0); color: #00ff9f; }
     }
 
-    /* 🔥 Screen flicker */
     .flicker {
       animation: flicker 0.2s ease-in-out 3;
     }
@@ -82,6 +81,7 @@ const input = document.getElementById("hiddenInput");
 const sound = document.getElementById("typeSound");
 
 let currentInput = "";
+let attempts = 0;
 
 // focus
 document.body.addEventListener("click", () => input.focus());
@@ -105,10 +105,14 @@ input.addEventListener("keydown", async (e) => {
   }
 });
 
+// 🔐 password hidden
 function updateLine() {
   const line = document.getElementById("currentLine");
   if (line) {
-    line.innerHTML = "Password: " + currentInput + `<span class="cursor"></span>`;
+    line.innerHTML =
+      "Password: " +
+      "*".repeat(currentInput.length) +
+      `<span class="cursor"></span>`;
   }
 }
 
@@ -148,6 +152,28 @@ function typeText(text, speed = 20) {
       }
     }, speed);
   });
+}
+
+// 😈 fake typing intrusion
+async function fakeIntrusion() {
+  const line = document.getElementById("currentLine");
+  if (!line) return;
+
+  let fake = "";
+  const text = "override";
+
+  for (let i = 0; i < text.length; i++) {
+    fake += text[i];
+    line.innerHTML =
+      "Password: " +
+      "*".repeat(currentInput.length) +
+      `<span style="color:red">${fake}</span><span class="cursor"></span>`;
+
+    await new Promise(r => setTimeout(r, 80));
+  }
+
+  await new Promise(r => setTimeout(r, 300));
+  updateLine();
 }
 
 // countdown
@@ -198,10 +224,10 @@ async function boot() {
   createInputLine();
 }
 
+// commands
 async function handleCommand(val) {
 
-  // 🔐 CHANGE THIS PASSWORD WHEN READY
-  if (val === "halden") {
+  if (val === "halden") { // change later
 
     await typeText("ACCESS ACCEPTED");
     await typeText("Verifying credentials...");
@@ -211,6 +237,7 @@ async function handleCommand(val) {
     await typeText("");
 
     await typeText("Redirecting to NODE-02...");
+    await typeText("WARNING: NODE ACCESS IS UNAUTHORIZED");
 
     setTimeout(() => {
       window.location.href = "/node-02";
@@ -218,17 +245,34 @@ async function handleCommand(val) {
   }
 
   else {
+
+    attempts++;
+
     term.classList.add("glitch");
 
     await typeText("ACCESS DENIED");
     await typeText("Tracing connection...");
     await typeText("IP: " + randomIP());
     await typeText("Location locked.");
+
+    // 😈 fake intrusion on 2nd attempt
+    if (attempts === 2) {
+      await typeText("...");
+      await fakeIntrusion();
+    }
+
+    // ⚠️ warning after 3 attempts
+    if (attempts >= 3) {
+      await typeText("WARNING: TOO MANY FAILED ATTEMPTS");
+    }
+
     await typeText("Lazarus Security notified.");
 
     setTimeout(() => term.classList.remove("glitch"), 1000);
   }
 }
+
+boot();
 </script>
 
 </body>
