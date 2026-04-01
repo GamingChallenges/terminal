@@ -44,9 +44,7 @@
 <body>
 
 <div id="terminal"></div>
-
 <input id="input" autofocus onkeydown="handle(event)">
-
 <audio id="typeSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
 <script>
@@ -82,13 +80,12 @@ function typeText(text, speed = 20) {
   });
 }
 
-// 🔥 COUNTDOWN FUNCTION (UK TIME)
+// ⏳ Countdown to Friday 10PM UK
 function getCountdown() {
   const now = new Date();
 
-  // Set target to Friday 10PM UK time
   const target = new Date();
-  target.setDate(target.getDate() + (5 - target.getDay() + 7) % 7); // next Friday
+  target.setDate(target.getDate() + (5 - target.getDay() + 7) % 7);
   target.setHours(22, 0, 0, 0);
 
   const diff = target - now;
@@ -100,24 +97,29 @@ function getCountdown() {
   return `${hours}h ${minutes}m ${seconds}s`;
 }
 
-// 🔁 Update countdown every second
 setInterval(() => {
-  const existing = document.getElementById("countdown");
-  if (existing) {
-    existing.innerText = "EVENT TIMER: " + getCountdown();
-  }
+  const el = document.getElementById("countdown");
+  if (el) el.innerText = "EVENT TIMER: " + getCountdown();
 }, 1000);
 
-// Initial boot text
+// 🚀 Boot sequence
 async function boot() {
-  await typeText("LAZARUS BIOTECH INTERNAL SYSTEM v3.4");
-  await typeText("-----------------------------------");
+
+  term.innerHTML += `
+╔══════════════════════════════╗
+║      LAZARUS BIOTECH         ║
+║   Internal Secure System     ║
+╚══════════════════════════════╝
+
+`;
+
   await typeText("Establishing secure uplink...");
   await typeText("Accessing containment network...");
-  await typeText("WARNING: Infection levels rising");
+  await typeText("WARNING: INFECTION LEVELS CRITICAL");
+  await typeText("WARNING: UNAUTHORIZED ACCESS WILL BE TRACKED");
   await typeText("");
-  await typeText("EVENT TIMER:");
 
+  await typeText("EVENT TIMER:");
   term.innerHTML += `<span id="countdown">${getCountdown()}</span>\n\n`;
 
   await typeText("Enter command:");
@@ -125,25 +127,30 @@ async function boot() {
 
 boot();
 
+// 💻 Input handler
 async function handle(e) {
   if (e.key === "Enter") {
+
     let val = input.value.toLowerCase();
     input.value = "";
 
     term.innerHTML += "> " + val + "\n";
 
-    if (val === "ikea") {
+    // 🔐 PASSWORD
+    if (val === "halden") {
+
       await typeText("AUTHENTICATION ACCEPTED");
-      await typeText("Welcome, Field Operative");
+      await typeText("Welcome, Dr. Halden");
       await typeText("");
-      await typeText("Retrieving target location...");
-      await typeText("TARGET: IKEA DISTRIBUTION SITE");
-      await typeText("STATUS: OVERRUN");
+      await typeText("Retrieving classified data...");
+      await typeText("STATUS: CONTAINMENT FAILURE");
+      await typeText("NOTE: This system is no longer secure");
+
     }
 
+    // 📜 COMMANDS
     else if (val === "help") {
       await typeText("Available commands:");
-      await typeText("- login");
       await typeText("- status");
       await typeText("- logs");
       await typeText("- clear");
@@ -168,7 +175,9 @@ async function handle(e) {
       boot();
     }
 
+    // ❌ WRONG INPUT
     else {
+
       term.classList.add("glitch");
 
       await typeText("UNAUTHORIZED ACCESS DETECTED");
