@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Terminal</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      padding: 20px;
+    }
+    input {
+      background: black;
+      color: #00ff00;
+      border: none;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+<p>ACCESS TERMINAL</p>
+<p>Enter password:</p>
+
+<input id="input" autofocus onkeydown="check(event)">
+
+<p id="output"></p>
+
+<script>
+function check(e) {
+  if (e.key === "Enter") {
+    let val = document.getElementById("input").value.toLowerCase();
+
+    if (val === "ikea") {
+      document.getElementById("output").innerText = "ACCESS GRANTED\nNext clue: Warehouse 3";
+    } else {
+      document.getElementById("output").innerText = "ACCESS DENIED";
+    }
+
+    document.getElementById("input").value = "";
+  }
+}
+</script>
+
+</body>
+</html>
