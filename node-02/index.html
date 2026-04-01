@@ -21,13 +21,24 @@
     }
 
     .glitch {
-      animation: glitch 0.1s infinite;
+      animation: glitch 0.08s infinite;
+      color: red;
     }
 
     @keyframes glitch {
-      0% { transform: translate(2px, -2px); color: red; }
+      0% { transform: translate(2px, -2px); }
       50% { transform: translate(-2px, 2px); }
-      100% { transform: translate(0); color: #00ff9f; }
+      100% { transform: translate(0); }
+    }
+
+    .flicker {
+      animation: flicker 0.15s;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
     }
   </style>
 </head>
@@ -39,19 +50,58 @@
 <script>
 const term = document.getElementById("terminal");
 
+function scroll() {
+  term.scrollTop = term.scrollHeight;
+}
+
+// 🔥 Random flicker
+function randomFlicker() {
+  if (Math.random() < 0.15) {
+    term.classList.add("flicker");
+    setTimeout(() => term.classList.remove("flicker"), 100);
+  }
+}
+
+// 😈 Glitch text injection
+async function glitchText(text) {
+  term.classList.add("glitch");
+  term.innerHTML += text + "\n";
+  scroll();
+  await new Promise(r => setTimeout(r, 200));
+  term.classList.remove("glitch");
+}
+
+// typing with random glitches
 function typeText(text, speed = 25) {
   return new Promise(resolve => {
     let i = 0;
-    let interval = setInterval(() => {
-      term.innerHTML += text[i];
-      i++;
-      term.scrollTop = term.scrollHeight;
+    let interval = setInterval(async () => {
 
-      if (i >= text.length) {
+      // random flicker effect
+      randomFlicker();
+
+      // random glitch moment
+      if (Math.random() < 0.05) {
         clearInterval(interval);
-        term.innerHTML += "\n";
-        resolve();
+        await glitchText("/// SIGNAL ERROR ///");
+        interval = setInterval(type, speed);
+        return;
       }
+
+      type();
+
+      function type() {
+        term.innerHTML += text[i];
+        i++;
+        scroll();
+
+        if (i >= text.length) {
+          clearInterval(interval);
+          term.innerHTML += "\n";
+          resolve();
+        }
+      }
+
     }, speed);
   });
 }
@@ -62,12 +112,10 @@ async function boot() {
   await typeText(">>> CONNECTION UNSTABLE");
   await typeText(">>> DATA CORRUPTION DETECTED\n");
 
-  term.classList.add("glitch");
+  await glitchText("!! MEMORY FAULT DETECTED !!");
 
   await typeText("RECOVERING FILES...");
   await typeText("RECOVERY PARTIAL\n");
-
-  term.classList.remove("glitch");
 
   await typeText("[LOG ENTRY — FINAL TRANSMISSION]");
   await typeText("");
@@ -76,6 +124,8 @@ async function boot() {
   await typeText("This was never just an outbreak.");
   await typeText("The infection is adapting faster than we can contain it.");
   await typeText("");
+
+  await glitchText("/// UNKNOWN PROCESS DETECTED ///");
 
   await typeText("Subject-07 is no longer a test.");
   await typeText("It is leading them.");
@@ -88,6 +138,8 @@ async function boot() {
 
   await typeText("It's intelligence.");
   await typeText("");
+
+  await glitchText(">> ACCESSING EXTERNAL SIGNAL <<");
 
   await typeText("It knows where we are.");
   await typeText("It knows where YOU are.");
@@ -109,6 +161,8 @@ async function boot() {
   await typeText("That’s where it’s strongest.");
   await typeText("");
 
+  await glitchText("///// THEY SEE YOU /////");
+
   await typeText("That’s where it’s waiting.");
   await typeText("");
 
@@ -116,6 +170,8 @@ async function boot() {
 
   await typeText("");
   await typeText("...something else is in this system");
+
+  await glitchText(">> CONNECTION NOT CLOSED <<");
 }
 
 boot();
