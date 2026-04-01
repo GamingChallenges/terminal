@@ -15,16 +15,21 @@
     #terminal {
       padding: 20px;
       height: 100vh;
+      overflow-y: auto;
       white-space: pre-line;
     }
 
-    input {
-      background: transparent;
-      color: #00ff9f;
-      border: none;
-      outline: none;
-      font-family: monospace;
-      width: 100%;
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background: #00ff9f;
+      animation: blink 1s infinite;
+      margin-left: 5px;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
     }
 
     .glitch {
@@ -38,19 +43,65 @@
       75% { transform: translate(-2px, -2px); }
       100% { transform: translate(0); color: #00ff9f; }
     }
+
+    #hiddenInput {
+      position: absolute;
+      opacity: 0;
+    }
   </style>
 </head>
 
 <body>
 
 <div id="terminal"></div>
-<input id="input" autofocus onkeydown="handle(event)">
+<input id="hiddenInput" autofocus>
+
 <audio id="typeSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
 <script>
 const term = document.getElementById("terminal");
-const input = document.getElementById("input");
+const input = document.getElementById("hiddenInput");
 const sound = document.getElementById("typeSound");
+
+let currentInput = "";
+
+// keep focus always
+document.body.addEventListener("click", () => input.focus());
+
+input.addEventListener("keydown", async (e) => {
+  if (e.key.length === 1) {
+    currentInput += e.key;
+    updateLine();
+  }
+
+  if (e.key === "Backspace") {
+    currentInput = currentInput.slice(0, -1);
+    updateLine();
+  }
+
+  if (e.key === "Enter") {
+    term.innerHTML += "\n";
+    await handleCommand(currentInput.toLowerCase());
+    currentInput = "";
+    createInputLine();
+  }
+});
+
+function updateLine() {
+  const line = document.getElementById("currentLine");
+  if (line) {
+    line.innerHTML = "> " + currentInput + `<span class="cursor"></span>`;
+  }
+}
+
+function createInputLine() {
+  term.innerHTML += `<div id="currentLine">> <span class="cursor"></span></div>`;
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  term.scrollTop = term.scrollHeight;
+}
 
 function playSound() {
   sound.currentTime = 0;
@@ -71,6 +122,7 @@ function typeText(text, speed = 20) {
       term.innerHTML += text[i];
       playSound();
       i++;
+      scrollToBottom();
       if (i >= text.length) {
         clearInterval(interval);
         term.innerHTML += "\n";
@@ -80,7 +132,7 @@ function typeText(text, speed = 20) {
   });
 }
 
-// ⏳ Countdown to Friday 10PM UK
+// ⏳ Countdown
 function getCountdown() {
   const now = new Date();
 
@@ -99,10 +151,10 @@ function getCountdown() {
 
 setInterval(() => {
   const el = document.getElementById("countdown");
-  if (el) el.innerText = "EVENT TIMER: " + getCountdown();
+  if (el) el.innerText = `Project Biotech: ${getCountdown()}`;
 }, 1000);
 
-// 🚀 Boot sequence
+// 🚀 Boot
 async function boot() {
 
   term.innerHTML += `
@@ -119,79 +171,65 @@ async function boot() {
   await typeText("WARNING: UNAUTHORIZED ACCESS WILL BE TRACKED");
   await typeText("");
 
-  await typeText("EVENT TIMER:");
-  term.innerHTML += `<span id="countdown">${getCountdown()}</span>\n\n`;
+  term.innerHTML += `<span id="countdown">EVENT TIMER: ${getCountdown()}</span>\n\n`;
 
   await typeText("Enter command:");
+  createInputLine();
+}
+
+// 💻 Commands
+async function handleCommand(val) {
+
+  if (val === "halden") {
+    await typeText("AUTHENTICATION ACCEPTED");
+    await typeText("Welcome, Dr. Halden");
+    await typeText("");
+    await typeText("Retrieving classified data...");
+    await typeText("STATUS: CONTAINMENT FAILURE");
+    await typeText("NOTE: This system is no longer secure");
+  }
+
+  else if (val === "help") {
+    await typeText("Available commands:");
+    await typeText("- status");
+    await typeText("- logs");
+    await typeText("- clear");
+  }
+
+  else if (val === "status") {
+    await typeText("Facility Status:");
+    await typeText("- Infection Level: CRITICAL");
+    await typeText("- Survivors: <5%");
+    await typeText("- Containment: FAILED");
+  }
+
+  else if (val === "logs") {
+    await typeText("Log Entry #4421:");
+    await typeText("Subject zero breached containment.");
+    await typeText("Staff evacuation unsuccessful.");
+    await typeText("Do NOT let it reach the surface.");
+  }
+
+  else if (val === "clear") {
+    term.innerHTML = "";
+    await boot();
+    return;
+  }
+
+  else {
+    term.classList.add("glitch");
+
+    await typeText("UNAUTHORIZED ACCESS DETECTED");
+    await typeText("Tracing connection...");
+    await typeText("IP: " + randomIP());
+    await typeText("Location locked.");
+    await typeText("Lazarus Security notified.");
+
+    setTimeout(() => term.classList.remove("glitch"), 1000);
+  }
 }
 
 boot();
-
-// 💻 Input handler
-async function handle(e) {
-  if (e.key === "Enter") {
-
-    let val = input.value.toLowerCase();
-    input.value = "";
-
-    term.innerHTML += "> " + val + "\n";
-
-    // 🔐 PASSWORD
-    if (val === "halden") {
-
-      await typeText("AUTHENTICATION ACCEPTED");
-      await typeText("Welcome, Dr. Halden");
-      await typeText("");
-      await typeText("Retrieving classified data...");
-      await typeText("STATUS: CONTAINMENT FAILURE");
-      await typeText("NOTE: This system is no longer secure");
-
-    }
-
-    // 📜 COMMANDS
-    else if (val === "help") {
-      await typeText("Available commands:");
-      await typeText("- status");
-      await typeText("- logs");
-      await typeText("- clear");
-    }
-
-    else if (val === "status") {
-      await typeText("Facility Status:");
-      await typeText("- Infection Level: CRITICAL");
-      await typeText("- Survivors: <5%");
-      await typeText("- Containment: FAILED");
-    }
-
-    else if (val === "logs") {
-      await typeText("Log Entry #4421:");
-      await typeText("Subject zero breached containment.");
-      await typeText("Staff evacuation unsuccessful.");
-      await typeText("Do NOT let it reach the surface.");
-    }
-
-    else if (val === "clear") {
-      term.innerHTML = "";
-      boot();
-    }
-
-    // ❌ WRONG INPUT
-    else {
-
-      term.classList.add("glitch");
-
-      await typeText("UNAUTHORIZED ACCESS DETECTED");
-      await typeText("Tracing connection...");
-      await typeText("IP: " + randomIP());
-      await typeText("Location locked.");
-      await typeText("Lazarus Security notified.");
-
-      setTimeout(() => {
-        term.classList.remove("glitch");
-      }, 1000);
-    }
-  }
-}
 </script>
 
 </body>
