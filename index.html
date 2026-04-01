@@ -9,14 +9,21 @@
       color: #00ff9f;
       font-family: monospace;
       margin: 0;
-      overflow: hidden;
     }
 
     #terminal {
-      padding: 20px;
+      padding: 30px;
       height: 100vh;
       overflow-y: auto;
       white-space: pre-line;
+      box-sizing: border-box;
+      text-shadow: 0 0 5px #00ff9f;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f;
     }
 
     .cursor {
@@ -65,7 +72,7 @@ const sound = document.getElementById("typeSound");
 
 let currentInput = "";
 
-// keep focus always
+// keep focus
 document.body.addEventListener("click", () => input.focus());
 
 input.addEventListener("keydown", async (e) => {
@@ -132,7 +139,7 @@ function typeText(text, speed = 20) {
   });
 }
 
-// ⏳ Countdown
+// countdown
 function getCountdown() {
   const now = new Date();
 
@@ -151,18 +158,19 @@ function getCountdown() {
 
 setInterval(() => {
   const el = document.getElementById("countdown");
-  if (el) el.innerText = `Project TIMER: ${getCountdown()}`;
+  if (el) el.innerText = `PROJECT TIMER: ${getCountdown()}`;
 }, 1000);
 
-// 🚀 Boot
+// boot
 async function boot() {
 
   term.innerHTML += `
+<div class="logo">
 ╔══════════════════════════════╗
 ║      LAZARUS BIOTECH         ║
 ║   Internal Secure System     ║
 ╚══════════════════════════════╝
-
+</div>
 `;
 
   await typeText("Establishing secure uplink...");
@@ -171,13 +179,13 @@ async function boot() {
   await typeText("WARNING: UNAUTHORIZED ACCESS WILL BE TRACKED");
   await typeText("");
 
-  term.innerHTML += `<span id="countdown">Project TIMER: ${getCountdown()}</span>\n\n`;
+  term.innerHTML += `<span id="countdown">PROJECT TIMER: ${getCountdown()}</span>\n\n`;
 
   await typeText("Enter command:");
   createInputLine();
 }
 
-// 💻 Commands
+// commands
 async function handleCommand(val) {
 
   if (val === "halden") {
