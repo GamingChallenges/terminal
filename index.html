@@ -151,7 +151,7 @@ function getCountdown() {
 
 setInterval(() => {
   const el = document.getElementById("countdown");
-  if (el) el.innerText = `Project Biotech: ${getCountdown()}`;
+  if (el) el.innerText = `Project TIMER: ${getCountdown()}`;
 }, 1000);
 
 // 🚀 Boot
@@ -171,7 +171,7 @@ async function boot() {
   await typeText("WARNING: UNAUTHORIZED ACCESS WILL BE TRACKED");
   await typeText("");
 
-  term.innerHTML += `<span id="countdown">EVENT TIMER: ${getCountdown()}</span>\n\n`;
+  term.innerHTML += `<span id="countdown">Project TIMER: ${getCountdown()}</span>\n\n`;
 
   await typeText("Enter command:");
   createInputLine();
