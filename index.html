@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Secure Terminal</title>
+  <title>Lazarus Biotech Terminal</title>
 
   <style>
     body {
       background: black;
-      color: #00ff00;
+      color: #00ff9f;
       font-family: monospace;
       margin: 0;
       overflow: hidden;
@@ -20,7 +20,7 @@
 
     input {
       background: transparent;
-      color: #00ff00;
+      color: #00ff9f;
       border: none;
       outline: none;
       font-family: monospace;
@@ -28,7 +28,7 @@
     }
 
     .glitch {
-      animation: glitch 0.2s infinite;
+      animation: glitch 0.15s infinite;
     }
 
     @keyframes glitch {
@@ -36,20 +36,14 @@
       25% { transform: translate(-2px, 2px); }
       50% { transform: translate(2px, 2px); }
       75% { transform: translate(-2px, -2px); }
-      100% { transform: translate(0); color: #00ff00; }
+      100% { transform: translate(0); color: #00ff9f; }
     }
   </style>
 </head>
 
 <body>
 
-<div id="terminal">
-Initializing system...
-Connecting to remote node...
-Bypassing firewall...
-
-ENTER PASSWORD:
-</div>
+<div id="terminal"></div>
 
 <input id="input" autofocus onkeydown="handle(event)">
 
@@ -88,6 +82,49 @@ function typeText(text, speed = 20) {
   });
 }
 
+// 🔥 COUNTDOWN FUNCTION (UK TIME)
+function getCountdown() {
+  const now = new Date();
+
+  // Set target to Friday 10PM UK time
+  const target = new Date();
+  target.setDate(target.getDate() + (5 - target.getDay() + 7) % 7); // next Friday
+  target.setHours(22, 0, 0, 0);
+
+  const diff = target - now;
+
+  const hours = Math.floor(diff / 1000 / 60 / 60);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+// 🔁 Update countdown every second
+setInterval(() => {
+  const existing = document.getElementById("countdown");
+  if (existing) {
+    existing.innerText = "EVENT TIMER: " + getCountdown();
+  }
+}, 1000);
+
+// Initial boot text
+async function boot() {
+  await typeText("LAZARUS BIOTECH INTERNAL SYSTEM v3.4");
+  await typeText("-----------------------------------");
+  await typeText("Establishing secure uplink...");
+  await typeText("Accessing containment network...");
+  await typeText("WARNING: Infection levels rising");
+  await typeText("");
+  await typeText("EVENT TIMER:");
+
+  term.innerHTML += `<span id="countdown">${getCountdown()}</span>\n\n`;
+
+  await typeText("Enter command:");
+}
+
+boot();
+
 async function handle(e) {
   if (e.key === "Enter") {
     let val = input.value.toLowerCase();
@@ -96,22 +133,49 @@ async function handle(e) {
     term.innerHTML += "> " + val + "\n";
 
     if (val === "ikea") {
+      await typeText("AUTHENTICATION ACCEPTED");
+      await typeText("Welcome, Field Operative");
+      await typeText("");
+      await typeText("Retrieving target location...");
+      await typeText("TARGET: IKEA DISTRIBUTION SITE");
+      await typeText("STATUS: OVERRUN");
+    }
 
-      await typeText("ACCESS GRANTED...");
-      await typeText("Decrypting data...");
-      await typeText("Target: IKEA FACILITY");
-      await typeText("HORDE INBOUND");
+    else if (val === "help") {
+      await typeText("Available commands:");
+      await typeText("- login");
+      await typeText("- status");
+      await typeText("- logs");
+      await typeText("- clear");
+    }
 
-    } else {
+    else if (val === "status") {
+      await typeText("Facility Status:");
+      await typeText("- Infection Level: CRITICAL");
+      await typeText("- Survivors: <5%");
+      await typeText("- Containment: FAILED");
+    }
 
-      // GLITCH EFFECT
+    else if (val === "logs") {
+      await typeText("Log Entry #4421:");
+      await typeText("Subject zero breached containment.");
+      await typeText("Staff evacuation unsuccessful.");
+      await typeText("Do NOT let it reach the surface.");
+    }
+
+    else if (val === "clear") {
+      term.innerHTML = "";
+      boot();
+    }
+
+    else {
       term.classList.add("glitch");
 
-      await typeText("ACCESS DENIED");
-      await typeText("Tracking user...");
+      await typeText("UNAUTHORIZED ACCESS DETECTED");
+      await typeText("Tracing connection...");
       await typeText("IP: " + randomIP());
-      await typeText("Location found.");
-      await typeText("Do not try again.");
+      await typeText("Location locked.");
+      await typeText("Lazarus Security notified.");
 
       setTimeout(() => {
         term.classList.remove("glitch");
