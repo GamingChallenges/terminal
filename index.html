@@ -21,7 +21,7 @@
     }
 
     .logo {
-      text-align: center;
+      text-align: left;
       margin-bottom: 20px;
       text-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f;
     }
@@ -51,6 +51,17 @@
       100% { transform: translate(0); color: #00ff9f; }
     }
 
+    /* 🔥 Screen flicker */
+    .flicker {
+      animation: flicker 0.2s ease-in-out 3;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
     #hiddenInput {
       position: absolute;
       opacity: 0;
@@ -72,7 +83,7 @@ const sound = document.getElementById("typeSound");
 
 let currentInput = "";
 
-// keep focus
+// focus
 document.body.addEventListener("click", () => input.focus());
 
 input.addEventListener("keydown", async (e) => {
@@ -97,12 +108,12 @@ input.addEventListener("keydown", async (e) => {
 function updateLine() {
   const line = document.getElementById("currentLine");
   if (line) {
-    line.innerHTML = "> " + currentInput + `<span class="cursor"></span>`;
+    line.innerHTML = "Password: " + currentInput + `<span class="cursor"></span>`;
   }
 }
 
 function createInputLine() {
-  term.innerHTML += `<div id="currentLine">> <span class="cursor"></span></div>`;
+  term.innerHTML += `<div id="currentLine">Password: <span class="cursor"></span></div>`;
   scrollToBottom();
 }
 
@@ -164,6 +175,8 @@ setInterval(() => {
 // boot
 async function boot() {
 
+  term.classList.add("flicker");
+
   term.innerHTML += `
 <div class="logo">
 ╔══════════════════════════════╗
@@ -181,53 +194,26 @@ async function boot() {
 
   term.innerHTML += `<span id="countdown">PROJECT TIMER: ${getCountdown()}</span>\n\n`;
 
-  await typeText("Enter command:");
+  await typeText("User: Dr. Halden");
   createInputLine();
 }
 
 // commands
 async function handleCommand(val) {
 
+  // 🔐 CHANGE THIS PASSWORD WHEN READY
   if (val === "halden") {
-    await typeText("AUTHENTICATION ACCEPTED");
+    await typeText("ACCESS GRANTED");
     await typeText("Welcome, Dr. Halden");
     await typeText("");
     await typeText("Retrieving classified data...");
     await typeText("STATUS: CONTAINMENT FAILURE");
-    await typeText("NOTE: This system is no longer secure");
-  }
-
-  else if (val === "help") {
-    await typeText("Available commands:");
-    await typeText("- status");
-    await typeText("- logs");
-    await typeText("- clear");
-  }
-
-  else if (val === "status") {
-    await typeText("Facility Status:");
-    await typeText("- Infection Level: CRITICAL");
-    await typeText("- Survivors: <5%");
-    await typeText("- Containment: FAILED");
-  }
-
-  else if (val === "logs") {
-    await typeText("Log Entry #4421:");
-    await typeText("Subject zero breached containment.");
-    await typeText("Staff evacuation unsuccessful.");
-    await typeText("Do NOT let it reach the surface.");
-  }
-
-  else if (val === "clear") {
-    term.innerHTML = "";
-    await boot();
-    return;
   }
 
   else {
     term.classList.add("glitch");
 
-    await typeText("UNAUTHORIZED ACCESS DETECTED");
+    await typeText("ACCESS DENIED");
     await typeText("Tracing connection...");
     await typeText("IP: " + randomIP());
     await typeText("Location locked.");
